@@ -20,11 +20,6 @@ def random_pixel_in_circle(circle: Circle):
     center = circle.get_center()
     x = center[0] + r * math.cos(theta)
     y = center[1] + r * math.sin(theta)
-
-    # rand_pixel_on_circle = random.choice(circle.get_pixel_array())
-    # circle_center = circle.get_center()
-    # rand_radius = Line(circle_center, rand_pixel_on_circle, circle).get_pixel_array()
-    # distribution = (i for i in range(len()))
     return (round(x), round(y))
 
 

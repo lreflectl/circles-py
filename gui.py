@@ -1,6 +1,7 @@
 import customtkinter as ctk
 from canvas import Canvas
 from main import run_experiment
+import time
 
 
 class App(ctk.CTk):
@@ -13,6 +14,7 @@ class App(ctk.CTk):
 
         self.title('Circles Problem App')
         self.geometry(f"{App.WIDTH}x{App.HEIGHT}")
+        self.protocol('WM_DELETE_WINDOW', self.on_closing) # call on_closing() when app gets closed
 
         # Default parameters
         self.params = {
@@ -67,8 +69,6 @@ class App(ctk.CTk):
         self.params_button = ctk.CTkButton(self.parameter_panel, command=self.set_params, text='Set parameters')
         self.params_button.grid(row=2, column=0, padx=10, pady=10)
         
-    
-
     def set_params(self):
         try:
             inner_circles = int(self.inner_num_input.get())
@@ -81,13 +81,11 @@ class App(ctk.CTk):
         except ValueError:
             print('error')
         
-        
-
-        
-    
     def generate_results(self):
         self.display.delete('all')
         self.canvas.erase()
+
+        start_time = time.perf_counter()
         run_experiment(self.canvas, **self.params)
 
         height = self.params['CANVAS_HEIGHT']
@@ -108,16 +106,19 @@ class App(ctk.CTk):
                 progress_value += delta
                 self.progress_bar.set(y/height)
                 self.update_idletasks()
-        self.progress_bar.set(1) 
+        self.progress_bar.set(1)
 
-        self.info_label.configure(text=f'Road hits = {self.canvas.line_overlaps}\n'
-        + f'Total shots = {self.params["INNER_CIRCLES"]}\n'
-        + f'Hit chance = {self.canvas.line_overlaps/self.params["INNER_CIRCLES"]:.2%}\n')
+        experiment_time = time.perf_counter() - start_time
 
-        
-
-
-
+        self.info_label.configure(
+            text=f'Road hits = {self.canvas.line_overlaps}\n'
+            + f'Total shots = {self.params["INNER_CIRCLES"]}\n'
+            + f'Hit chance = {self.canvas.line_overlaps/self.params["INNER_CIRCLES"]:.2%}\n'
+            + f'Exec time = {experiment_time:.2f}sec\n'
+        )
+    
+    def on_closing(self, event=0):
+        self.destroy()
 
 
 if __name__ == '__main__':
