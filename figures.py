@@ -36,6 +36,9 @@ class Circle:
     
     def get_center(self) -> Pixel:
         return (self._x, self._y)
+    
+    def get_radius(self) -> int:
+        return self._r
 
 
 class Line:

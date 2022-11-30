@@ -5,7 +5,7 @@ from main import run_experiment
 
 class App(ctk.CTk):
 
-    WIDTH = 720
+    WIDTH = 660
     HEIGHT = 540
 
     def __init__(self):
@@ -49,28 +49,39 @@ class App(ctk.CTk):
         self.progress_bar.set(1)
         self.progress_bar.grid(row=2, column=0)
 
-        self.button = ctk.CTkButton(master=self, command=self.generate_results, text='Run experiment')
+        self.button = ctk.CTkButton(self, command=self.generate_results, text='Run experiment')
         self.button.grid(row=3, column=0, padx=20, pady=20)
 
-        self.info_label = ctk.CTkLabel(master=self, text='Run the experiment to see stats', width=100)
+        self.info_label = ctk.CTkLabel(self, text='Run the experiment to see stats', width=200)
         self.info_label.grid(row=0, column=1, padx=20, pady=20)
 
-        self.parameter_input = ctk.CTkEntry(master=self, placeholder_text='Inner circles number')
-        self.parameter_input.grid(row=1, column=1, padx=20, pady=20)
+        self.parameter_panel = ctk.CTkFrame(self)
+        self.parameter_panel.grid(row=1, column=1, padx=20, pady=20)
 
-        self.params_button = ctk.CTkButton(master=self, command=self.set_params, text='Set parameters')
-        self.params_button.grid(row=3, column=1, padx=20, pady=20)
+        self.inner_num_input = ctk.CTkEntry(self.parameter_panel, placeholder_text='Inner circles number')
+        self.inner_num_input.grid(row=0, column=0, padx=10, pady=10)
+
+        self.inner_radius_input = ctk.CTkEntry(self.parameter_panel, placeholder_text='Inner circles radiuses')
+        self.inner_radius_input.grid(row=1, column=0, padx=10, pady=10)
+
+        self.params_button = ctk.CTkButton(self.parameter_panel, command=self.set_params, text='Set parameters')
+        self.params_button.grid(row=2, column=0, padx=10, pady=10)
+        
     
 
     def set_params(self):
         try:
-            inner_circles = int(self.parameter_input.get())
+            inner_circles = int(self.inner_num_input.get())
             self.params['INNER_CIRCLES'] = inner_circles
-            self.parameter_input.configure(placeholder_text='OK, set')
         except ValueError:
-            self.parameter_input.set('')
-            self.parameter_input.configure(placeholder_text='Wrong value')
-            
+            print('error')
+        try:
+            inner_radiuses = int(self.inner_radius_input.get())
+            self.params['INNER_RADIUSES'] = inner_radiuses
+        except ValueError:
+            print('error')
+        
+        
 
         
     
@@ -101,7 +112,7 @@ class App(ctk.CTk):
 
         self.info_label.configure(text=f'Road hits = {self.canvas.line_overlaps}\n'
         + f'Total shots = {self.params["INNER_CIRCLES"]}\n'
-        + f'Road hit probability = {self.canvas.line_overlaps/self.params["INNER_CIRCLES"]:.2%}\n')
+        + f'Hit chance = {self.canvas.line_overlaps/self.params["INNER_CIRCLES"]:.2%}\n')
 
         
 
