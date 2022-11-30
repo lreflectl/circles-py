@@ -26,11 +26,12 @@ class App(ctk.CTk):
             'INNER_ID': 2,
         }
 
+        # Color schema for figures and collisions
         self.color_map = {
-            '0': 'blue',
-            '1': 'green',
-            '2': 'red',
-            '*': 'black',
+            '0': 'blue',  # Main circle
+            '1': 'green',  # Road
+            '2': 'red',  # Inner circles
+            '*': 'black',  # Collisions
         }
 
         # app canvas
@@ -54,9 +55,10 @@ class App(ctk.CTk):
         self.button = ctk.CTkButton(self, command=self.generate_results, text='Run experiment')
         self.button.grid(row=3, column=0, padx=20, pady=20)
 
-        self.info_label = ctk.CTkLabel(self, text='Run the experiment to see stats', width=200)
-        self.info_label.grid(row=0, column=1, padx=20, pady=20)
+        self.stats_label = ctk.CTkLabel(self, text='Run the experiment to see stats', width=200)
+        self.stats_label.grid(row=0, column=1, padx=20, pady=20)
 
+        # Panel for parameters configuration
         self.parameter_panel = ctk.CTkFrame(self)
         self.parameter_panel.grid(row=1, column=1, padx=20, pady=20)
 
@@ -68,19 +70,21 @@ class App(ctk.CTk):
 
         self.params_button = ctk.CTkButton(self.parameter_panel, command=self.set_params, text='Set parameters')
         self.params_button.grid(row=2, column=0, padx=10, pady=10)
-        
+    
+    # Try to set parameters if there are some and it is valid
     def set_params(self):
         try:
             inner_circles = int(self.inner_num_input.get())
             self.params['INNER_CIRCLES'] = inner_circles
         except ValueError:
-            print('error')
+            print('Circles number not set')
         try:
             inner_radiuses = int(self.inner_radius_input.get())
             self.params['INNER_RADIUSES'] = inner_radiuses
         except ValueError:
-            print('error')
-        
+            print('Inner radiuses not set')
+    
+    # Run experiment and show the results
     def generate_results(self):
         self.display.delete('all')
         self.canvas.erase()
@@ -92,11 +96,12 @@ class App(ctk.CTk):
         width = self.params['CANVAS_WIDTH']
 
         self.progress_bar.set(0)
-
         delta = int(height/100)
         progress_value = delta
+
+        # Draw result of the experiment on canvas and update progress bar
         canvas_array = self.canvas.get_pixel_array()
-        for y in range(height):
+        for y in range(height): 
             for x in range(width):
                 if canvas_array[y][x] == '.':
                     continue
@@ -110,13 +115,14 @@ class App(ctk.CTk):
 
         experiment_time = time.perf_counter() - start_time
 
-        self.info_label.configure(
+        self.stats_label.configure(
             text=f'Road hits = {self.canvas.line_overlaps}\n'
             + f'Total shots = {self.params["INNER_CIRCLES"]}\n'
             + f'Hit chance = {self.canvas.line_overlaps/self.params["INNER_CIRCLES"]:.2%}\n'
             + f'Exec time = {experiment_time:.2f}sec\n'
         )
     
+    # Destroy self and all child widgets 
     def on_closing(self, event=0):
         self.destroy()
 
