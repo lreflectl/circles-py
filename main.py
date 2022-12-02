@@ -30,6 +30,7 @@ def run_experiment(canvas: Canvas, **kwargs):
     # Get two random pixels on the main circle
     rand_pixels = random.sample(main_circle.get_pixel_array(), k=2)
 
+    # Draw two lines through the pixels
     line = Line(rand_pixels[0], rand_pixels[1], figure_id=1)
     canvas.set_pixel_array(line.get_pixel_array(), line.fig_id)
 

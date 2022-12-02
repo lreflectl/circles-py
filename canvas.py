@@ -16,9 +16,9 @@ class Canvas:
     def get_center_xy(self) -> Pixel:
         return int(self._x / 2), int(self._y / 2)
     
-    # Checks if pixel of a new figure overlaps with another
-    # Return index of figure which collides
-    def detect_collision(self, x: int, y: int):
+    # Check if pixel of a new figure overlaps with another
+    # Return index of figure which has been collided
+    def detect_collision(self, x: int, y: int) -> int:
         if not (0 <= x <= self._x and 0 <= y <= self._y):
             raise Exception('Pixel coordinates out of bounds!')
         if self._canvas[y][x] == '*':
@@ -32,7 +32,7 @@ class Canvas:
         else:
             raise Exception('Pixel coordinates out of bounds!')
     
-    # Set pixels according to their collision and count line overlaps
+    # Set pixels according to their collision and check if line was overlapped
     def set_pixel_array(self, group: list[Pixel], figure_id: int):
         inner_overlapped_line = False
         for pixel in group:
@@ -41,12 +41,14 @@ class Canvas:
                 self.set_pixel(*pixel, str(figure_id))
             elif overlapped_figure_id == 1:
                 if not inner_overlapped_line:
-                    self.line_overlaps += 1
                     inner_overlapped_line = True
             elif overlapped_figure_id == 0 and figure_id == 1:
                 self.set_pixel(*pixel, str(figure_id))
             else:
                 self.set_pixel(*pixel, '*')
+        
+        if inner_overlapped_line:
+            self.line_overlaps += 1
 
     def erase(self):
         self._canvas = [['.' for _ in range(self._x)] for _ in range(self._y)]

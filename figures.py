@@ -69,9 +69,12 @@ class Line:
         # Going through x axis and calculating y's
         for x in range(self._start_x + x_direction, self._end_x, x_direction):
             y = self._b * x + self._c
-            # Round (or strip, or ceil) calculated y
-            y = round(y)
-            pixels.add(Pixel((x, y)))
+            # Save both upper and lower bounds of calculated y
+            # to keep line consistently connected
+            y_upper = math.ceil(y)
+            y_lower = math.floor(y)
+            pixels.add(Pixel((x, y_upper)))
+            pixels.add(Pixel((x, y_lower)))
         
         ys_to_skip = set(p[1] for p in pixels)
         y_direction = 1 if self._end_y >= self._start_y else -1
@@ -83,9 +86,12 @@ class Line:
                 x = self._start_x
             else:
                 x = (y - self._c) / self._b
-            # Round (or strip, or ceil) calculated x
-            x = round(x)
-            pixels.add(Pixel((x, y)))
+            # Save both upper and lower bounds of calculated x
+            # to keep line consistently connected
+            x_upper = math.ceil(x)
+            x_lower = math.floor(x)
+            pixels.add(Pixel((x_upper, y)))
+            pixels.add(Pixel((x_lower, y)))
         
         self._pixel_array.extend(pixels)
         self._pixel_array.append(Pixel((self._start_x, self._start_y)))
